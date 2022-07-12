@@ -1,12 +1,48 @@
 plugins {
     id 'java-gradle-plugin'
+    id 'maven-publish'
 }
 
 gradlePlugin {
     plugins {
         UploadPlugin {
-            id = 'com.wanlinruo.upload'
-            implementationClass = 'com.wanlinruo.upload.UploadPlugin'
+            id = 'com.wanlinruo.plugin'
+            implementationClass = 'com.wanlinruo.plugin.UploadPlugin'
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        repositories {
+            maven {
+                // 配置凭证
+                credentials {
+                    username 'username' // 仓库发布用户名
+                    password 'password' // 仓库发布用户密码
+                }
+                // 区分snapshot和release
+                def releasesRepoUrl = layout.buildDirectory.dir('repos/releases')
+                def snapshotsRepoUrl = layout.buildDirectory.dir('repos/snapshots')
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            }
+        }
+        publications {
+            maven(MavenPublication) {
+                // Applies the component for the release build variant.
+                from components.java
+
+                // You can then customize attributes of the publication as shown below.
+                groupId 'com.wanlinruo.plugin'
+                artifactId 'upload'
+                version '0.0.1-SNAPSHOT'
+
+                pom {
+                    name = "wanlinruo"
+                    description = "This is plugin for test"
+                    url = 'https://wanlinruo.com'
+                }
+            }
         }
     }
 }
