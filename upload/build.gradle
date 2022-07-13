@@ -12,6 +12,12 @@ gradlePlugin {
     }
 }
 
+//ext.set("uploadInfo") {
+//    version = "0.0.1-SNAPSHOT"
+//    artifactId = "upload"
+//    groupId = "com.wanlinruo.plugin"
+//}
+
 afterEvaluate {
     publishing {
         repositories {
@@ -35,7 +41,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId 'com.wanlinruo.plugin'
                 artifactId 'upload'
-                version '0.0.1-SNAPSHOT'
+                version '0.0.1-LOCAL'
 
                 pom {
                     name = "wanlinruo"
