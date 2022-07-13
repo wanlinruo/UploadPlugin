@@ -2,6 +2,7 @@ package com.wanlinruo.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.publish.internal.DefaultPublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
@@ -17,17 +18,21 @@ import java.net.URI
 class UploadPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        println("===========UploadPlugin=========== ")
+        println("===========UploadPlugin===========")
+        // 跳过直接可运行模块
+        if (target.plugins.hasPlugin(ApplicationPlugin::class.java)) return
 
         // 集成MavenPublishPlugin
-        target.plugins.apply(MavenPublishPlugin::class.java)
-        target.extensions
-            .create("gradlePlugin", GradlePluginDevelopmentExtension::class.java)
-            .plugins.create("UploadPlugin")
-            .apply {
-                id = "com.wanlinruo.plugin"
-                implementationClass = "com.wanlinruo.plugin.UploadPlugin"
-            }
+        if (!target.plugins.hasPlugin(MavenPublishPlugin::class.java)) {
+            target.plugins.apply(MavenPublishPlugin::class.java)
+            target.extensions
+                .create("gradlePlugin", GradlePluginDevelopmentExtension::class.java)
+                .plugins.create("UploadPlugin")
+                .apply {
+                    id = "com.wanlinruo.plugin"
+                    implementationClass = "com.wanlinruo.plugin.UploadPlugin"
+                }
+        }
 
         // 检测UploadInfo
         val info = target.extensions.create("uploadInfo", UploadInfo::class.java)
