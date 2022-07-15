@@ -12,6 +12,9 @@ gradlePlugin {
     }
 }
 
+dependencies {
+    compileOnly 'com.android.tools.build:gradle:7.2.1'
+}
 //ext.set("uploadInfo") {
 //    version = "0.0.1-SNAPSHOT"
 //    artifactId = "upload"
