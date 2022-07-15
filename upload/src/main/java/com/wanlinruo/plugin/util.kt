@@ -6,7 +6,11 @@ import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.internal.api.DefaultAndroidSourceDirectorySet
+import groovy.util.Node
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.tasks.bundling.Jar
 
 /**
@@ -33,5 +37,48 @@ fun createSourceCodeJar(project: Project): Jar {
             main.java.also { set -> set.include("**/*.kt") }.srcDirs,
             (main.kotlin as DefaultAndroidSourceDirectorySet).srcDirs
         )
+    }
+}
+
+fun handleDependency(target: Project, pom: MavenPom) {
+    pom.withXml { xml ->
+        val root = xml.asNode()
+        val dependenciesNode = root.appendNode("dependencies")
+        target.configurations.forEach {
+            if (it.name == "compile") addDependency(dependenciesNode, it, "compile")
+            if (it.name == "api") addDependency(dependenciesNode, it, "compile")
+            if (it.name == "implementation") addDependency(dependenciesNode, it, "runtime")
+            if (it.name == "compileOnly") addDependency(dependenciesNode, it, "provided")
+            if (it.name == "runtimeOnly") addDependency(dependenciesNode, it, "runtime")
+            if (it.name == "provided") addDependency(dependenciesNode, it, "provided")
+            if (it.name == "apk") addDependency(dependenciesNode, it, "runtime")
+        }
+    }
+}
+
+fun addDependency(dependenciesNode: Node, configuration: Configuration, scope: String) {
+    // 非compile都不录入
+    if (scope != "compile") return
+    // 需要找出依赖项中的版本信息
+    configuration.dependencies.forEach {
+        // 排除不合规的依赖
+        if (it.group == null || it.version == null || it.name == "unspecified") return
+        var group = it.group
+        var name = it.name
+        var version = it.version
+        // 兼容逻辑，本地project的情况
+        if (it is ProjectDependency) {
+            val subDepUploadInfo =
+                it.dependencyProject.extensions.create("uploadInfo", UploadInfo::class.java)
+            group = subDepUploadInfo.groupId
+            name = subDepUploadInfo.artifactId
+            version = subDepUploadInfo.version
+        }
+        // 添加到依赖的node中
+        val dependencyNode = dependenciesNode.appendNode("dependency")
+        dependencyNode.appendNode("groupId", group)
+        dependencyNode.appendNode("artifactId", name)
+        dependencyNode.appendNode("version", version)
+        dependencyNode.appendNode("scope", scope)
     }
 }

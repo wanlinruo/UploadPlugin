@@ -3,7 +3,6 @@ package com.wanlinruo.plugin
 import com.android.build.gradle.AppPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.publish.internal.DefaultPublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
@@ -67,6 +66,8 @@ class UploadPlugin : Plugin<Project> {
                     version = info.version
                     if (info.sourceCode)
                         artifact(createSourceCodeJar(target))
+                    if (info.hasPomDepend)
+                        handleDependency(target, pom)
                 }
             }
         }
