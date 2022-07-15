@@ -10,8 +10,8 @@ data class UploadInfo(
     val groupId: String,
     val artifactId: String,
     val version: String,
-    val releaseUrl: String = "https://www.wanlinruo.com/repository/maven-releases/",
-    val snapshotUrl: String = "https://www.wanlinruo.com/repository/maven-snapshots/",
+    val releaseUrl: String = "https://www.wanlinruo.com/nexus/repository/maven-releases/",
+    val snapshotUrl: String = "https://www.wanlinruo.com/nexus/repository/maven-snapshots/",
     val userName: String = "uploader",
     val password: String = "uploader",
     val hasPomDepend: Boolean = true,// 是否包含依赖项

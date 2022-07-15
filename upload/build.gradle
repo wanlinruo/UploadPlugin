@@ -27,13 +27,13 @@ afterEvaluate {
             maven {
                 // 配置凭证
                 credentials {
-                    username 'username' // 仓库发布用户名
-                    password 'password' // 仓库发布用户密码
+                    username 'uploader' // 仓库发布用户名
+                    password 'uploader' // 仓库发布用户密码
                 }
                 // 区分snapshot和release
-                def releasesRepoUrl = layout.buildDirectory.dir('repos/releases')
-                def snapshotsRepoUrl = layout.buildDirectory.dir('repos/snapshots')
-                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                def releasesRepoUrl = "https://www.wanlinruo.com/nexus/repository/maven-releases/"
+                def snapshotsRepoUrl = "https://www.wanlinruo.com/nexus/repository/maven-snapshots/"
+                url = snapshotsRepoUrl
             }
         }
         publications {
@@ -44,7 +44,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId 'com.wanlinruo.plugin'
                 artifactId 'upload'
-                version '0.0.1-LOCAL'
+                version '0.0.4-SNAPSHOT'
 
                 pom {
                     name = "wanlinruo"

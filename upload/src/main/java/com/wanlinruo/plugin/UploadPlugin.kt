@@ -70,6 +70,10 @@ class UploadPlugin : Plugin<Project> {
                         handleDependency(target, pom)
                 }
             }
+            // 创建task
+            val publishRealTask = "publishMavenPublicationToMavenRepository"
+            project.task(publishRealTask)
+            println("Upload success !")
         }
     }
 }
