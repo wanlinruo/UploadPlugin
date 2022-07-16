@@ -1,6 +1,7 @@
 plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
+    id 'org.jetbrains.kotlin.jvm'
 }
 
 gradlePlugin {
@@ -64,7 +65,7 @@ afterEvaluate {
 //}
 //
 //ext.set("uploadInfo") {
-//    version = "0.0.6-SNAPSHOT"
+//    version = "0.0.8-SNAPSHOT"
 //    artifactId = "upload"
 //    groupId = "com.wanlinruo.plugin"
 //}
