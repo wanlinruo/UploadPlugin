@@ -29,7 +29,7 @@ class UploadPlugin : Plugin<Project> {
                 .create("gradlePlugin", GradlePluginDevelopmentExtension::class.java)
                 .plugins.create("UploadPlugin")
                 .apply {
-                    id = "com.wanlinruo.plugin"
+                    id = "com.wanlinruo.plugin.upload"
                     implementationClass = "com.wanlinruo.plugin.UploadPlugin"
                 }
         }

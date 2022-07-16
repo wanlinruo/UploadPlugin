@@ -10,8 +10,18 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven {url 'https://www.jitpack.io'}
+        maven { url 'https://www.jitpack.io' }
+        maven { url 'https://www.wanlinruo.com/nexus/repository/maven-public/' }
     }
 }
+
+//buildscript {
+//    repositories {
+//        maven { url 'https://www.wanlinruo.com/nexus/repository/maven-public/' }
+//    }
+//    dependencies {
+//        classpath "com.wanlinruo.plugin:upload:0.0.7-SNAPSHOT"
+//    }
+//}
 rootProject.name = "UploadPlugin"
 include ':upload'

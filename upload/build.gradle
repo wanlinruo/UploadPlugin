@@ -6,7 +6,7 @@ plugins {
 gradlePlugin {
     plugins {
         UploadPlugin {
-            id = 'com.wanlinruo.plugin'
+            id = 'com.wanlinruo.plugin.upload'
             implementationClass = 'com.wanlinruo.plugin.UploadPlugin'
         }
     }
@@ -15,11 +15,12 @@ gradlePlugin {
 dependencies {
     compileOnly 'com.android.tools.build:gradle:7.2.1'
 }
-//ext.set("uploadInfo") {
-//    version = "0.0.1-SNAPSHOT"
-//    artifactId = "upload"
-//    groupId = "com.wanlinruo.plugin"
-//}
+
+// 用于打包源代码的任务
+task androidSourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from sourceSets.main.allSource
+}
 
 afterEvaluate {
     publishing {
@@ -40,11 +41,12 @@ afterEvaluate {
             maven(MavenPublication) {
                 // Applies the component for the release build variant.
                 from components.java
+                artifact androidSourcesJar
 
                 // You can then customize attributes of the publication as shown below.
                 groupId 'com.wanlinruo.plugin'
                 artifactId 'upload'
-                version '0.0.4-SNAPSHOT'
+                version '0.0.7-SNAPSHOT'
 
                 pom {
                     name = "wanlinruo"
@@ -55,3 +57,14 @@ afterEvaluate {
         }
     }
 }
+
+
+//plugins {
+//    id 'com.wanlinruo.plugin.upload'
+//}
+//
+//ext.set("uploadInfo") {
+//    version = "0.0.6-SNAPSHOT"
+//    artifactId = "upload"
+//    groupId = "com.wanlinruo.plugin"
+//}
