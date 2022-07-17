@@ -2,15 +2,12 @@
 
 package com.wanlinruo.plugin
 
-import com.android.build.gradle.AppPlugin
-import com.android.build.gradle.LibraryExtension
-import com.android.build.gradle.LibraryPlugin
-import com.android.build.gradle.internal.api.DefaultAndroidSourceDirectorySet
 import groovy.util.Node
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.publish.maven.MavenPom
+import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.bundling.Jar
 
 /**
@@ -24,19 +21,16 @@ fun isEmpty(str: String): Boolean {
 }
 
 fun isAndroidOrAndroidLibrary(project: Project): Boolean {
-    return project.plugins.hasPlugin(AppPlugin::class.java)
-            || project.plugins.hasPlugin(LibraryPlugin::class.java)
+    return project.plugins.hasPlugin("com.android.application")
+            || project.plugins.hasPlugin("com.android.library")
 }
 
 fun createSourceCodeJar(project: Project): Jar {
     return project.tasks.create("sourceJar", Jar::class.java) {
-        val main = project.extensions.getByType(LibraryExtension::class.java)
-            .sourceSets.getByName("main")
+        val main =
+            (project.extensions.getByName("sourceSets") as SourceSetContainer).getByName("main")
         it.archiveClassifier.set("sources")
-        it.from(
-            main.java.also { set -> set.include("**/*.kt") }.srcDirs,
-            (main.kotlin as DefaultAndroidSourceDirectorySet).srcDirs
-        )
+        it.from(main.allSource.srcDirs)
     }
 }
 

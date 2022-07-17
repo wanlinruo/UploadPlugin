@@ -1,6 +1,5 @@
 package com.wanlinruo.plugin
 
-import com.android.build.gradle.AppPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.internal.DefaultPublishingExtension
@@ -20,7 +19,7 @@ class UploadPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         println("===========UploadPlugin===========")
         // 跳过直接可运行模块
-        if (target.plugins.hasPlugin(AppPlugin::class.java)) return
+        if (target.plugins.hasPlugin("com.android.application")) return
 
         // 集成MavenPublishPlugin
         if (!target.plugins.hasPlugin(MavenPublishPlugin::class.java)) {

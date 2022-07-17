@@ -14,6 +14,7 @@ gradlePlugin {
 }
 
 dependencies {
+    compileOnlyApi gradleApi()
     compileOnly 'com.android.tools.build:gradle:7.2.1'
 }
 
@@ -47,7 +48,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId 'com.wanlinruo.plugin'
                 artifactId 'upload'
-                version '0.0.7-SNAPSHOT'
+                version '0.0.11-SNAPSHOT'
 
                 pom {
                     name = "wanlinruo"
@@ -65,7 +66,7 @@ afterEvaluate {
 //}
 //
 //ext.set("uploadInfo") {
-//    version = "0.0.8-SNAPSHOT"
+//    version = "0.0.12-SNAPSHOT"
 //    artifactId = "upload"
 //    groupId = "com.wanlinruo.plugin"
 //}
