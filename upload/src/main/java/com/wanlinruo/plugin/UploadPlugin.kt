@@ -2,6 +2,7 @@ package com.wanlinruo.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.internal.DefaultPublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
@@ -24,9 +25,14 @@ class UploadPlugin : Plugin<Project> {
         // 集成MavenPublishPlugin
         if (!target.plugins.hasPlugin(MavenPublishPlugin::class.java)) {
             target.plugins.apply(MavenPublishPlugin::class.java)
-            target.extensions
-                .create("gradlePlugin", GradlePluginDevelopmentExtension::class.java)
-                .plugins.create("UploadPlugin")
+            // TODO: 后续此处可区分java-library、android-library
+            val javaPluginExtension = target.extensions.getByType(JavaPluginExtension::class.java)
+            val defaultPluginSourceSet = javaPluginExtension.sourceSets.getByName("main")
+            val defaultTestSourceSet = javaPluginExtension.sourceSets.getByName("test")
+            target.extensions.create(
+                "gradlePlugin", GradlePluginDevelopmentExtension::class.java,
+                target, defaultPluginSourceSet, defaultTestSourceSet
+            ).plugins.create("UploadPlugin")
                 .apply {
                     id = "com.wanlinruo.plugin.upload"
                     implementationClass = "com.wanlinruo.plugin.UploadPlugin"
