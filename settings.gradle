@@ -3,25 +3,26 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
+        maven { url 'https://www.wanlinruo.com/nexus/repository/maven-public/' }
+    }
+
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == 'com.wanlinruo.plugin.upload') {
+                useModule("com.wanlinruo.plugin:upload:0.0.11-SNAPSHOT")
+            }
+        }
     }
 }
+
 dependencyResolutionManagement {
 //    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
         maven { url 'https://www.jitpack.io' }
-        maven { url 'https://www.wanlinruo.com/nexus/repository/maven-public/' }
     }
 }
 
-//buildscript {
-//    repositories {
-//        maven { url 'https://www.wanlinruo.com/nexus/repository/maven-public/' }
-//    }
-//    dependencies {
-//        classpath "com.wanlinruo.plugin:upload:0.0.11-SNAPSHOT"
-//    }
-//}
 rootProject.name = "UploadPlugin"
 include ':upload'
