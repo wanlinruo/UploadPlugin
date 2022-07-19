@@ -6,14 +6,14 @@ package com.wanlinruo.plugin
  *  contact : wanlinruo@163.com
  *  description :
  */
-data class UploadInfo(
-    val groupId: String,
-    val artifactId: String,
-    val version: String,
-    val releaseUrl: String = "https://www.wanlinruo.com/nexus/repository/maven-releases/",
-    val snapshotUrl: String = "https://www.wanlinruo.com/nexus/repository/maven-snapshots/",
-    val userName: String = "uploader",
-    val password: String = "uploader",
-    val hasPomDepend: Boolean = true,// 是否包含依赖项
-    val sourceCode: Boolean = true,// 是否包含源码
-)
+open class UploadInfo {
+    var groupId: String = ""
+    var artifactId: String = ""
+    var version: String = ""
+    var releaseUrl: String = "https://www.wanlinruo.com/nexus/repository/maven-releases/"
+    var snapshotUrl: String = "https://www.wanlinruo.com/nexus/repository/maven-snapshots/"
+    var userName: String = "uploader"
+    var password: String = "uploader"
+    var hasPomDepend: Boolean = true// 是否包含依赖项
+    var sourceCode: Boolean = true// 是否包含源码
+}

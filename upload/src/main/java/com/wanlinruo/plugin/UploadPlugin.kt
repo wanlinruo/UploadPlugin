@@ -39,17 +39,21 @@ class UploadPlugin : Plugin<Project> {
                 }
         }
 
-        // 检测UploadInfo
+        // 确认UploadInfo闭包块
         val info = target.extensions.create("uploadInfo", UploadInfo::class.java)
-        if (isEmpty(info.groupId))
-            throw IllegalArgumentException("the groupId of uploadInfo must not be empty")
-        if (isEmpty(info.artifactId))
-            throw IllegalArgumentException("the artifactId of uploadInfo must not be empty")
-        if (isEmpty(info.version))
-            throw IllegalArgumentException("the version of uploadInfo must not be empty")
 
         // 在全部配置完成后，执行task之前的回调
         target.afterEvaluate { project ->
+
+            // 检测UploadInfo
+            if (isEmpty(info.groupId))
+                throw IllegalArgumentException("the groupId of uploadInfo must not be empty")
+            if (isEmpty(info.artifactId))
+                throw IllegalArgumentException("the artifactId of uploadInfo must not be empty")
+            if (isEmpty(info.version))
+                throw IllegalArgumentException("the version of uploadInfo must not be empty")
+
+            // 集成maven流程
             project.extensions.create("publishing", DefaultPublishingExtension::class.java).apply {
                 // 准备凭证
                 repositories.maven {
@@ -65,7 +69,7 @@ class UploadPlugin : Plugin<Project> {
                     }
                 }
                 // 准备信息
-                publications.create("maven", MavenPublication::class.java).apply {
+                publications.register("maven", MavenPublication::class.java).get().apply {
                     groupId = info.groupId
                     artifactId = info.artifactId
                     version = info.version
@@ -74,6 +78,15 @@ class UploadPlugin : Plugin<Project> {
                     if (info.hasPomDepend)
                         handleDependency(target, pom)
                 }
+//                publications.create("maven", MavenPublication::class.java).apply {
+//                    groupId = info.groupId
+//                    artifactId = info.artifactId
+//                    version = info.version
+//                    if (info.sourceCode)
+//                        artifact(createSourceCodeJar(target))
+//                    if (info.hasPomDepend)
+//                        handleDependency(target, pom)
+//                }
             }
             // 创建task
             val publishRealTask = "publishMavenPublicationToMavenRepository"

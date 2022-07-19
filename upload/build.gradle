@@ -48,7 +48,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId 'com.wanlinruo.plugin'
                 artifactId 'upload'
-                version '0.0.13-SNAPSHOT'
+                version '0.0.19-SNAPSHOT'
 
                 pom {
                     name = "wanlinruo"
@@ -66,8 +66,8 @@ afterEvaluate {
 //    id 'com.wanlinruo.plugin.upload'
 //}
 //
-//ext.set("uploadInfo") {
-//    version = "1.0.0-SNAPSHOT"
+//uploadInfo {
+//    version = "0.1.0-SNAPSHOT"
 //    artifactId = "upload"
 //    groupId = "com.wanlinruo.plugin"
 //}
