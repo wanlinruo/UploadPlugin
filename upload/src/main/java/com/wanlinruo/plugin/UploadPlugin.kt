@@ -2,8 +2,9 @@ package com.wanlinruo.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.publish.internal.DefaultPublishingExtension
+import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
@@ -54,9 +55,9 @@ class UploadPlugin : Plugin<Project> {
                 throw IllegalArgumentException("the version of uploadInfo must not be empty")
 
             // 集成maven流程
-            project.extensions.create("publishing", DefaultPublishingExtension::class.java).apply {
+            project.extensions.configure(PublishingExtension::class.java) { publishing ->
                 // 准备凭证
-                repositories.maven {
+                publishing.repositories.maven {
                     it.credentials.username = info.userName
                     it.credentials.password = info.password
                     // 区分上传目标地址
@@ -69,29 +70,26 @@ class UploadPlugin : Plugin<Project> {
                     }
                 }
                 // 准备信息
-                publications.register("maven", MavenPublication::class.java).get().apply {
-                    groupId = info.groupId
-                    artifactId = info.artifactId
-                    version = info.version
-                    if (info.sourceCode)
-                        artifact(createSourceCodeJar(target))
-                    if (info.hasPomDepend)
-                        handleDependency(target, pom)
-                }
-//                publications.create("maven", MavenPublication::class.java).apply {
-//                    groupId = info.groupId
-//                    artifactId = info.artifactId
-//                    version = info.version
-//                    if (info.sourceCode)
-//                        artifact(createSourceCodeJar(target))
-//                    if (info.hasPomDepend)
-//                        handleDependency(target, pom)
-//                }
+                publishing.publications.register("maven", MavenPublication::class.java).get()
+                    .apply {
+                        from(project.components.getByName("java") as SoftwareComponent)
+                        groupId = info.groupId
+                        artifactId = info.artifactId
+                        version = info.version
+                        if (info.sourceCode)
+                            artifact(createSourceCodeJar(target))
+                        if (info.hasPomDepend)
+                            handleDependency(target, pom)
+                    }
             }
+
             // 创建task
-            val publishRealTask = "publishMavenPublicationToMavenRepository"
-            project.task(publishRealTask)
-            println("Upload success !")
+            target.task(
+                mutableMapOf<String, Any>("dependsOn" to "publishMavenPublicationToMavenRepository"),
+                "upload"
+            ).doLast {
+                println("Upload success !")
+            }
         }
     }
 }

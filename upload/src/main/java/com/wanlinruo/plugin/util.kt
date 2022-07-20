@@ -41,6 +41,7 @@ fun handleDependency(target: Project, pom: MavenPom) {
         target.configurations.forEach {
             if (it.name == "compile") addDependency(dependenciesNode, it, "compile")
             if (it.name == "api") addDependency(dependenciesNode, it, "compile")
+//            if (it.name == "compileOnlyApi") addDependency(dependenciesNode, it, "compile")
             if (it.name == "implementation") addDependency(dependenciesNode, it, "runtime")
             if (it.name == "compileOnly") addDependency(dependenciesNode, it, "provided")
             if (it.name == "runtimeOnly") addDependency(dependenciesNode, it, "runtime")
