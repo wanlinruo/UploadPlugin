@@ -2,11 +2,9 @@ package com.wanlinruo.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
-import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 import java.net.URI
 
 /**
@@ -15,26 +13,28 @@ import java.net.URI
  *  contact : wanlinruo@163.com
  *  description :
  */
-class UploadPlugin : Plugin<Project> {
+open class UploadPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         println("===========UploadPlugin===========")
-        // 跳过直接可运行模块
-        if (target.plugins.hasPlugin("com.android.application")) return
+
+        // 确认组件类型
+        val isAndroid = isAndroidOrAndroidLibrary(target)
+
+        // 设置跳过规则
+        if (isSkip(target)) return
 
         // 集成MavenPublishPlugin
         if (!target.plugins.hasPlugin(MavenPublishPlugin::class.java)) {
             target.plugins.apply(MavenPublishPlugin::class.java)
-            target.extensions.configure(GradlePluginDevelopmentExtension::class.java) {
-                it.plugins.register("UploadPlugin").get().apply {
-                    id = "com.wanlinruo.plugin.upload"
-                    implementationClass = "com.wanlinruo.plugin.UploadPlugin"
-                }
-            }
         }
 
         // 确认UploadInfo闭包块
         val info = target.extensions.create("uploadInfo", UploadInfo::class.java)
+
+        if (isAndroid) {
+            executeAndroidAssemble(target)
+        }
 
         // 在全部配置完成后，执行task之前的回调
         target.afterEvaluate { project ->
@@ -65,12 +65,20 @@ class UploadPlugin : Plugin<Project> {
                 // 准备信息
                 publishing.publications.register("maven", MavenPublication::class.java).get()
                     .apply {
-                        from(project.components.getByName("java") as SoftwareComponent)
+                        // 设置产物
+                        if (isAndroid) {
+                            executeAndroidArtifact(project, this)
+                        } else {
+                            executeJavaArtifact(project, this)
+                        }
+                        // 设置版本信息
                         groupId = info.groupId
                         artifactId = info.artifactId
                         version = info.version
+                        // 设置源码
                         if (info.sourceCode)
                             artifact(createSourceCodeJar(target))
+                        // 设置依赖管理
                         if (info.hasPomDepend)
                             handleDependency(target, pom)
                     }
@@ -85,4 +93,12 @@ class UploadPlugin : Plugin<Project> {
             }
         }
     }
+
+    open fun isSkip(target: Project): Boolean = false
+
+    open fun executeAndroidAssemble(target: Project) {}
+
+    open fun executeJavaArtifact(project: Project, mavenPublication: MavenPublication) {}
+
+    open fun executeAndroidArtifact(project: Project, mavenPublication: MavenPublication) {}
 }

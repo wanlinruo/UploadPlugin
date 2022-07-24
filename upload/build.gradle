@@ -1,5 +1,5 @@
 plugins {
-    id 'java-gradle-plugin'
+//    id 'java-gradle-plugin'
 //    id 'maven-publish'
     id 'org.jetbrains.kotlin.jvm'
 
@@ -8,7 +8,8 @@ plugins {
 }
 
 dependencies {
-    compileOnlyApi gradleApi()
+    implementation gradleApi()
+    // 该依赖需要java11
     compileOnly 'com.android.tools.build:gradle:7.2.1'
     compileOnly 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10'
 }
@@ -21,8 +22,8 @@ dependencies {
 //        }
 //    }
 //}
-//
-//// 用于打包源代码的任务
+
+// 用于打包源代码的任务
 //task androidSourcesJar(type: Jar) {
 //    archiveClassifier.set('sources')
 //    from sourceSets.main.allSource
@@ -52,7 +53,7 @@ dependencies {
 //                // You can then customize attributes of the publication as shown below.
 //                groupId 'com.wanlinruo.plugin'
 //                artifactId 'upload'
-//                version '0.0.28-SNAPSHOT'
+//                version '0.0.32-SNAPSHOT'
 //
 //                pom {
 //                    name = "wanlinruo"
@@ -65,11 +66,11 @@ dependencies {
 //}
 
 '''
-0.0.28-SNAPSHOT 是默认集成版本
-0.0.29-SNAPSHOT 是自定义集成版本
+0.0.32-SNAPSHOT 是默认集成版本
+0.0.33-SNAPSHOT 是自定义集成版本
 '''
 uploadInfo {
-    version = "0.0.29-SNAPSHOT"
+    version = "0.0.33-SNAPSHOT"
     artifactId = "upload"
     groupId = "com.wanlinruo.plugin"
 }
