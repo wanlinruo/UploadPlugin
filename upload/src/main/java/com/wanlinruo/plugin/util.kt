@@ -2,6 +2,8 @@
 
 package com.wanlinruo.plugin
 
+
+import com.android.build.api.dsl.LibraryExtension
 import groovy.util.Node
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -25,12 +27,15 @@ fun isAndroidOrAndroidLibrary(project: Project): Boolean {
             || project.plugins.hasPlugin("com.android.library")
 }
 
-fun createSourceCodeJar(project: Project): Jar {
+fun createSourceCodeJar(project: Project, isAndroid: Boolean): Jar {
     return project.tasks.create("sourceJar", Jar::class.java) {
-        val main =
-            (project.extensions.getByName("sourceSets") as SourceSetContainer).getByName("main")
+        val sourceSetDirs = if (isAndroid) {
+            (project.extensions.getByType(LibraryExtension::class.java)).sourceSets.getByName("main").java.srcDirs()
+        } else {
+            (project.extensions.getByName("sourceSets") as SourceSetContainer).getByName("main").allSource.srcDirs
+        }
         it.archiveClassifier.set("sources")
-        it.from(main.allSource.srcDirs)
+        it.from(sourceSetDirs)
     }
 }
 

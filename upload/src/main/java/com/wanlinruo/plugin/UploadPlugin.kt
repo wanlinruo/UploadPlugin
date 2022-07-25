@@ -33,7 +33,7 @@ open class UploadPlugin : Plugin<Project> {
         val info = target.extensions.create("uploadInfo", UploadInfo::class.java)
 
         if (isAndroid) {
-            executeAndroidAssemble(target)
+            getAndroidVariant(target)
         }
 
         // 在全部配置完成后，执行task之前的回调
@@ -77,7 +77,7 @@ open class UploadPlugin : Plugin<Project> {
                         version = info.version
                         // 设置源码
                         if (info.sourceCode)
-                            artifact(createSourceCodeJar(target))
+                            artifact(createSourceCodeJar(target, isAndroid))
                         // 设置依赖管理
                         if (info.hasPomDepend)
                             handleDependency(target, pom)
@@ -96,7 +96,7 @@ open class UploadPlugin : Plugin<Project> {
 
     open fun isSkip(target: Project): Boolean = false
 
-    open fun executeAndroidAssemble(target: Project) {}
+    open fun getAndroidVariant(target: Project) {}
 
     open fun executeJavaArtifact(project: Project, mavenPublication: MavenPublication) {}
 

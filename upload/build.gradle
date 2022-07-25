@@ -1,10 +1,10 @@
 plugins {
 //    id 'java-gradle-plugin'
-//    id 'maven-publish'
+    id 'maven-publish'
     id 'org.jetbrains.kotlin.jvm'
 
-    id 'java-library'
-    id 'com.wanlinruo.plugin.upload'
+//    id 'java-library'
+//    id 'com.wanlinruo.plugin.upload'
 }
 
 dependencies {
@@ -24,53 +24,53 @@ dependencies {
 //}
 
 // 用于打包源代码的任务
-//task androidSourcesJar(type: Jar) {
-//    archiveClassifier.set('sources')
-//    from sourceSets.main.allSource
-//}
-//
-//afterEvaluate {
-//    publishing {
-//        repositories {
-//            maven {
-//                // 配置凭证
-//                credentials {
-//                    username 'uploader' // 仓库发布用户名
-//                    password 'uploader' // 仓库发布用户密码
-//                }
-//                // 区分snapshot和release
-//                def releasesRepoUrl = "https://www.wanlinruo.com/nexus/repository/maven-releases/"
-//                def snapshotsRepoUrl = "https://www.wanlinruo.com/nexus/repository/maven-snapshots/"
-//                url = snapshotsRepoUrl
-//            }
-//        }
-//        publications {
-//            maven(MavenPublication) {
-//                // Applies the component for the release build variant.
-//                from components.java
-//                artifact androidSourcesJar
-//
-//                // You can then customize attributes of the publication as shown below.
-//                groupId 'com.wanlinruo.plugin'
-//                artifactId 'upload'
-//                version '0.0.32-SNAPSHOT'
-//
-//                pom {
-//                    name = "wanlinruo"
-//                    description = "This is plugin for test"
-//                    url = 'https://wanlinruo.com'
-//                }
-//            }
-//        }
-//    }
-//}
-
-'''
-0.0.32-SNAPSHOT 是默认集成版本
-0.0.33-SNAPSHOT 是自定义集成版本
-'''
-uploadInfo {
-    version = "0.0.33-SNAPSHOT"
-    artifactId = "upload"
-    groupId = "com.wanlinruo.plugin"
+task androidSourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from sourceSets.main.allSource
 }
+
+afterEvaluate {
+    publishing {
+        repositories {
+            maven {
+                // 配置凭证
+                credentials {
+                    username 'uploader' // 仓库发布用户名
+                    password 'uploader' // 仓库发布用户密码
+                }
+                // 区分snapshot和release
+                def releasesRepoUrl = "https://www.wanlinruo.com/nexus/repository/maven-releases/"
+                def snapshotsRepoUrl = "https://www.wanlinruo.com/nexus/repository/maven-snapshots/"
+                url = snapshotsRepoUrl
+            }
+        }
+        publications {
+            maven(MavenPublication) {
+                // Applies the component for the release build variant.
+                from components.java
+                artifact androidSourcesJar
+
+                // You can then customize attributes of the publication as shown below.
+                groupId 'com.wanlinruo.plugin'
+                artifactId 'upload'
+                version '0.0.36-SNAPSHOT'
+
+                pom {
+                    name = "wanlinruo"
+                    description = "This is plugin for test"
+                    url = 'https://wanlinruo.com'
+                }
+            }
+        }
+    }
+}
+
+//'''
+//0.0.36-SNAPSHOT 是默认集成版本
+//0.0.37-SNAPSHOT 是自定义集成版本
+//'''
+//uploadInfo {
+//    version = "0.0.37-SNAPSHOT"
+//    artifactId = "upload"
+//    groupId = "com.wanlinruo.plugin"
+//}
