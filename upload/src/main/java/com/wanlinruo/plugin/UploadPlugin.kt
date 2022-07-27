@@ -32,10 +32,6 @@ open class UploadPlugin : Plugin<Project> {
         // 确认UploadInfo闭包块
         val info = target.extensions.create("uploadInfo", UploadInfo::class.java)
 
-        if (isAndroid) {
-            getAndroidVariant(target)
-        }
-
         // 在全部配置完成后，执行task之前的回调
         target.afterEvaluate { project ->
 
@@ -95,8 +91,6 @@ open class UploadPlugin : Plugin<Project> {
     }
 
     open fun isSkip(target: Project): Boolean = false
-
-    open fun getAndroidVariant(target: Project) {}
 
     open fun executeJavaArtifact(project: Project, mavenPublication: MavenPublication) {}
 
