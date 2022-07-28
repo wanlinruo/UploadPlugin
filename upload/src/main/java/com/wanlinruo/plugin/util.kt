@@ -28,6 +28,15 @@ fun isAndroidOrAndroidLibrary(project: Project): Boolean {
             || project.plugins.hasPlugin("com.android.library")
 }
 
+fun getBuildType(project: Project): String {
+    if (project.components.findByName("release") != null) {
+        return "release"
+    } else if (project.components.findByName("debug") != null) {
+        return "debug"
+    }
+    return ""
+}
+
 fun createSourceCodeJar(project: Project, isAndroid: Boolean): Jar {
     return project.tasks.create("sourceJar", Jar::class.java) {
         val sourceSetDirs = if (isAndroid) {

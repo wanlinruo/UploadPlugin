@@ -2,6 +2,7 @@ package com.wanlinruo.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
@@ -20,9 +21,14 @@ open class UploadPlugin : Plugin<Project> {
 
         // 确认组件类型
         val isAndroid = isAndroidOrAndroidLibrary(target)
+        println("isAndroid：$isAndroid")
+
+        // 确认组件的buildType
+        val buildType = getBuildType(target)
+        println("buildType：$buildType")
 
         // 设置跳过规则
-        if (isSkip(target)) return
+        if (isAndroid) if (target.plugins.hasPlugin("com.android.application")) return
 
         // 集成MavenPublishPlugin
         if (!target.plugins.hasPlugin(MavenPublishPlugin::class.java)) {
@@ -63,9 +69,16 @@ open class UploadPlugin : Plugin<Project> {
                     .apply {
                         // 设置产物
                         if (isAndroid) {
-                            executeAndroidArtifact(project, this)
+                            from(project.components.getByName("release") as SoftwareComponent)
+//                            if (buildType == "release") {
+//                                from(project.components.getByName("release") as SoftwareComponent)
+////                                artifact(project.tasks.getByName("assembleRelease"))
+//                            } else if (buildType == "debug") {
+////                                artifact(project.tasks.getByName("assembleDebug"))
+//                                from(project.components.getByName("debug") as SoftwareComponent)
+//                            }
                         } else {
-                            executeJavaArtifact(project, this)
+                            from(project.components.getByName("java") as SoftwareComponent)
                         }
                         // 设置版本信息
                         groupId = info.groupId
@@ -81,18 +94,26 @@ open class UploadPlugin : Plugin<Project> {
             }
 
             // 创建task
-            target.task(
-                mutableMapOf<String, Any>("dependsOn" to "publishMavenPublicationToMavenRepository"),
-                "upload"
-            ).doLast {
-                println("Upload success !")
-            }
+            target.tasks
+                .register("upload")
+                .get()
+                .apply {
+                    if (isAndroid) {
+                        dependsOn("assembleRelease")
+//                        if (buildType == "release") {
+//                            dependsOn("assembleRelease")
+//                        } else if (buildType == "debug") {
+//                            dependsOn("assembleDebug")
+//                        }
+                    }
+                }
+                .dependsOn("publishMavenPublicationToMavenRepository")
+                .apply {
+                    group = "wanlinruo"
+                }
+                .doLast {
+                    println("Upload success !")
+                }
         }
     }
-
-    open fun isSkip(target: Project): Boolean = false
-
-    open fun executeJavaArtifact(project: Project, mavenPublication: MavenPublication) {}
-
-    open fun executeAndroidArtifact(project: Project, mavenPublication: MavenPublication) {}
 }
