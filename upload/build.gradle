@@ -8,9 +8,10 @@ plugins {
 }
 
 dependencies {
+    // gradle的api
     implementation gradleApi()
-    // 该依赖需要java11
-    compileOnly 'com.android.tools.build:gradle:7.2.1'
+    // agp的依赖
+    compileOnly 'com.android.tools.build:gradle:3.6.3'
     compileOnly 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10'
 }
 
@@ -24,7 +25,7 @@ dependencies {
 //}
 
 // 用于打包源代码的任务
-task androidSourcesJar(type: Jar) {
+task javaSourcesJar(type: Jar) {
     archiveClassifier.set('sources')
     from sourceSets.main.allSource
 }
@@ -48,12 +49,12 @@ afterEvaluate {
             maven(MavenPublication) {
                 // Applies the component for the release build variant.
                 from components.java
-                artifact androidSourcesJar
+                artifact javaSourcesJar
 
                 // You can then customize attributes of the publication as shown below.
                 groupId 'com.wanlinruo.plugin'
                 artifactId 'upload'
-                version '0.0.54-SNAPSHOT'
+                version '0.0.56-SNAPSHOT'
 
                 pom {
                     name = "wanlinruo"

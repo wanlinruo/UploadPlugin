@@ -1,5 +1,6 @@
 package com.wanlinruo.plugin
 
+import com.android.build.gradle.AppPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.component.SoftwareComponent
@@ -23,12 +24,12 @@ open class UploadPlugin : Plugin<Project> {
         val isAndroid = isAndroidOrAndroidLibrary(target)
         println("isAndroid：$isAndroid")
 
+        // 设置跳过规则
+        if (isAndroid) if (target.plugins.hasPlugin(AppPlugin::class.java)) return
+
         // 确认组件的buildType
         val buildType = getBuildType(target)
         println("buildType：$buildType")
-
-        // 设置跳过规则
-        if (isAndroid) if (target.plugins.hasPlugin("com.android.application")) return
 
         // 集成MavenPublishPlugin
         if (!target.plugins.hasPlugin(MavenPublishPlugin::class.java)) {
@@ -69,14 +70,7 @@ open class UploadPlugin : Plugin<Project> {
                     .apply {
                         // 设置产物
                         if (isAndroid) {
-                            from(project.components.getByName("release") as SoftwareComponent)
-//                            if (buildType == "release") {
-//                                from(project.components.getByName("release") as SoftwareComponent)
-////                                artifact(project.tasks.getByName("assembleRelease"))
-//                            } else if (buildType == "debug") {
-////                                artifact(project.tasks.getByName("assembleDebug"))
-//                                from(project.components.getByName("debug") as SoftwareComponent)
-//                            }
+                            from(project.components.getByName(buildType) as SoftwareComponent)
                         } else {
                             from(project.components.getByName("java") as SoftwareComponent)
                         }
@@ -88,6 +82,7 @@ open class UploadPlugin : Plugin<Project> {
                         if (info.sourceCode)
                             artifact(createSourceCodeJar(target, isAndroid))
                         // 设置依赖管理
+                        pom { it.description.set("Upload AAR,the buildType is: $buildType") }
                         if (info.hasPomDepend)
                             handleDependency(target, pom)
                     }
@@ -99,12 +94,12 @@ open class UploadPlugin : Plugin<Project> {
                 .get()
                 .apply {
                     if (isAndroid) {
-                        dependsOn("assembleRelease")
-//                        if (buildType == "release") {
-//                            dependsOn("assembleRelease")
-//                        } else if (buildType == "debug") {
-//                            dependsOn("assembleDebug")
-//                        }
+//                        dependsOn("assembleRelease")
+                        if (buildType == "release") {
+                            dependsOn("assembleRelease")
+                        } else if (buildType == "debug") {
+                            dependsOn("assembleDebug")
+                        }
                     }
                 }
                 .dependsOn("publishMavenPublicationToMavenRepository")

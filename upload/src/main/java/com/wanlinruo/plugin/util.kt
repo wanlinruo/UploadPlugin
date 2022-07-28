@@ -2,8 +2,10 @@
 
 package com.wanlinruo.plugin
 
-
-import com.android.build.api.dsl.LibraryExtension
+import com.android.build.gradle.AppPlugin
+import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.LibraryExtension
+import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.internal.api.DefaultAndroidSourceDirectorySet
 import groovy.util.Node
 import org.gradle.api.Project
@@ -24,17 +26,22 @@ fun isEmpty(str: String): Boolean {
 }
 
 fun isAndroidOrAndroidLibrary(project: Project): Boolean {
-    return project.plugins.hasPlugin("com.android.application")
-            || project.plugins.hasPlugin("com.android.library")
+    return project.plugins.hasPlugin(AppPlugin::class.java)
+            || project.plugins.hasPlugin(LibraryPlugin::class.java)
 }
 
 fun getBuildType(project: Project): String {
-    if (project.components.findByName("release") != null) {
-        return "release"
-    } else if (project.components.findByName("debug") != null) {
-        return "debug"
+    var result = ""
+    (project.extensions.getByName("android") as BaseExtension).buildTypes.forEach {
+        // 区分变体，优先release
+        if (it.name == "release") {
+            return "release"
+        }
+        if (it.name == "debug") {
+            result = "debug"
+        }
     }
-    return ""
+    return result
 }
 
 fun createSourceCodeJar(project: Project, isAndroid: Boolean): Jar {
