@@ -1,5 +1,4 @@
 plugins {
-//    id 'java-gradle-plugin'
     id 'maven-publish'
     id 'org.jetbrains.kotlin.jvm'
 
@@ -14,15 +13,6 @@ dependencies {
     compileOnly 'com.android.tools.build:gradle:3.6.3'
     compileOnly 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10'
 }
-
-//gradlePlugin {
-//    plugins {
-//        UploadPlugin {
-//            id = 'com.wanlinruo.plugin.upload'
-//            implementationClass = 'com.wanlinruo.plugin.UploadPlugin'
-//        }
-//    }
-//}
 
 // 用于打包源代码的任务
 task javaSourcesJar(type: Jar) {
@@ -54,7 +44,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId 'com.wanlinruo.plugin'
                 artifactId 'upload'
-                version '0.0.56-SNAPSHOT'
+                version '0.0.57-SNAPSHOT'
 
                 pom {
                     name = "wanlinruo"

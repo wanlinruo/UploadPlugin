@@ -26,3 +26,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "UploadPlugin"
 include ':upload'
+include ':test_android_lib_java'
+include ':test_android_lib_kotlin'
+include ':test_lib_java'
+include ':test_lib_kotlin'

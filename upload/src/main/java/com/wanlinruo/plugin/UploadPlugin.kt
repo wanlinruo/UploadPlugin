@@ -15,21 +15,19 @@ import java.net.URI
  *  contact : wanlinruo@163.com
  *  description :
  */
-open class UploadPlugin : Plugin<Project> {
+class UploadPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         println("===========UploadPlugin===========")
 
         // 确认组件类型
         val isAndroid = isAndroidOrAndroidLibrary(target)
-        println("isAndroid：$isAndroid")
 
         // 设置跳过规则
         if (isAndroid) if (target.plugins.hasPlugin(AppPlugin::class.java)) return
 
         // 确认组件的buildType
         val buildType = getBuildType(target)
-        println("buildType：$buildType")
 
         // 集成MavenPublishPlugin
         if (!target.plugins.hasPlugin(MavenPublishPlugin::class.java)) {
@@ -94,7 +92,6 @@ open class UploadPlugin : Plugin<Project> {
                 .get()
                 .apply {
                     if (isAndroid) {
-//                        dependsOn("assembleRelease")
                         if (buildType == "release") {
                             dependsOn("assembleRelease")
                         } else if (buildType == "debug") {
