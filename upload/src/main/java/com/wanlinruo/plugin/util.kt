@@ -10,6 +10,7 @@ import com.android.build.gradle.internal.api.DefaultAndroidSourceDirectorySet
 import groovy.util.Node
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.tasks.SourceSetContainer
@@ -65,15 +66,20 @@ fun handleDependency(target: Project, pom: MavenPom) {
     pom.withXml { xml ->
         val root = xml.asNode()
         val dependenciesNode = root.appendNode("dependencies")
-        target.configurations.forEach {
-            if (it.name == "compile") addDependency(dependenciesNode, it, "compile")
-            if (it.name == "api") addDependency(dependenciesNode, it, "compile")
-            if (it.name == "implementation") addDependency(dependenciesNode, it, "runtime")
-            if (it.name == "compileOnly") addDependency(dependenciesNode, it, "provided")
-            if (it.name == "runtimeOnly") addDependency(dependenciesNode, it, "runtime")
-            if (it.name == "provided") addDependency(dependenciesNode, it, "provided")
-            if (it.name == "apk") addDependency(dependenciesNode, it, "runtime")
-        }
+        target.configurations.findByName("compile")
+            ?.let { addDependency(dependenciesNode, it, "compile") }
+        target.configurations.findByName("api")
+            ?.let { addDependency(dependenciesNode, it, "compile") }
+        target.configurations.findByName("implementation")
+            ?.let { addDependency(dependenciesNode, it, "runtime") }
+        target.configurations.findByName("compileOnly")
+            ?.let { addDependency(dependenciesNode, it, "provided") }
+        target.configurations.findByName("runtimeOnly")
+            ?.let { addDependency(dependenciesNode, it, "runtime") }
+        target.configurations.findByName("provided")
+            ?.let { addDependency(dependenciesNode, it, "provided") }
+        target.configurations.findByName("apk")
+            ?.let { addDependency(dependenciesNode, it, "runtime") }
     }
 }
 

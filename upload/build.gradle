@@ -44,7 +44,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId 'com.wanlinruo.plugin'
                 artifactId 'upload'
-                version '0.0.57-SNAPSHOT'
+                version '0.0.58-SNAPSHOT'
 
                 pom {
                     name = "wanlinruo"
