@@ -8,6 +8,7 @@ import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.internal.api.DefaultAndroidSourceDirectorySet
 import groovy.util.Node
+import groovy.util.NodeList
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
@@ -31,16 +32,20 @@ fun isAndroidOrAndroidLibrary(project: Project): Boolean {
             || project.plugins.hasPlugin(LibraryPlugin::class.java)
 }
 
-fun getBuildType(project: Project): String {
+fun getBuildType(project: Project, isAndroid: Boolean): String {
     var result = ""
-    (project.extensions.getByName("android") as BaseExtension).buildTypes.forEach {
-        // 区分变体，优先release
-        if (it.name == "release") {
-            return "release"
+    if (isAndroid) {
+        (project.extensions.getByName("android") as BaseExtension).buildTypes.forEach {
+            // 区分变体，优先release
+            if (it.name == "release") {
+                return "release"
+            }
+            if (it.name == "debug") {
+                result = "debug"
+            }
         }
-        if (it.name == "debug") {
-            result = "debug"
-        }
+    } else {
+        result = "jar"
     }
     return result
 }
@@ -62,7 +67,15 @@ fun createSourceCodeJar(project: Project, isAndroid: Boolean): Jar {
     }
 }
 
-fun handleDependency(target: Project, pom: MavenPom) {
+fun noNeedDependency(pom: MavenPom) {
+    pom.withXml { xml ->
+        val root = xml.asNode()
+        val dependenciesNode = root.get("dependencies") as NodeList
+        dependenciesNode.removeAll { true }
+    }
+}
+
+fun addDependencies(target: Project, pom: MavenPom) {
     pom.withXml { xml ->
         val root = xml.asNode()
         val dependenciesNode = root.appendNode("dependencies")

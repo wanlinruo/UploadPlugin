@@ -27,7 +27,7 @@ class UploadPlugin : Plugin<Project> {
         if (isAndroid) if (target.plugins.hasPlugin(AppPlugin::class.java)) return
 
         // 确认组件的buildType
-        val buildType = getBuildType(target)
+        val buildType = getBuildType(target, isAndroid)
 
         // 集成MavenPublishPlugin
         if (!target.plugins.hasPlugin(MavenPublishPlugin::class.java)) {
@@ -79,10 +79,15 @@ class UploadPlugin : Plugin<Project> {
                         // 设置源码
                         if (info.sourceCode)
                             artifact(createSourceCodeJar(target, isAndroid))
-                        // 设置依赖管理
-                        pom { it.description.set("Upload AAR,the buildType is: $buildType") }
-                        if (info.hasPomDepend)
-                            handleDependency(target, pom)
+                        // 设置依赖描述
+                        if (isAndroid) {
+                            pom { it.description.set("Upload AAR,the buildType is: $buildType") }
+                        } else {
+                            pom { it.description.set("Upload Jar,the buildType is: $buildType") }
+                        }
+                        // 由于from会帮我们自动收集依赖，所以这里只处理不需要以来的情况
+                        if (!info.hasPomDepend)
+                            noNeedDependency(pom)
                     }
             }
 
