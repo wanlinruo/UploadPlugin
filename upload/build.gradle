@@ -1,9 +1,7 @@
 plugins {
     id 'maven-publish'
     id 'org.jetbrains.kotlin.jvm'
-
 //    id 'java-library'
-//    id 'com.wanlinruo.plugin.upload'
 }
 
 dependencies {
@@ -44,24 +42,14 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId 'com.wanlinruo.plugin'
                 artifactId 'upload'
-                version '0.0.61-SNAPSHOT'
+                version '0.0.64-SNAPSHOT'
 
                 pom {
                     name = "wanlinruo"
-                    description = "This is plugin for test"
+                    description = "This is plugin for upload"
                     url = 'https://wanlinruo.com'
                 }
             }
         }
     }
 }
-
-//'''
-//0.0.36-SNAPSHOT 是默认集成版本
-//0.0.37-SNAPSHOT 是自定义集成版本
-//'''
-//uploadInfo {
-//    version = "0.0.37-SNAPSHOT"
-//    artifactId = "upload"
-//    groupId = "com.wanlinruo.plugin"
-//}

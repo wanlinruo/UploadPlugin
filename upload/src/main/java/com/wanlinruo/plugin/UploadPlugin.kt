@@ -22,12 +22,14 @@ class UploadPlugin : Plugin<Project> {
 
         // 确认组件类型
         val isAndroid = isAndroidOrAndroidLibrary(target)
+        println("isAndroid：$isAndroid")
 
         // 设置跳过规则
         if (isAndroid) if (target.plugins.hasPlugin(AppPlugin::class.java)) return
 
         // 确认组件的buildType
         val buildType = getBuildType(target, isAndroid)
+        println("buildType：$buildType")
 
         // 集成MavenPublishPlugin
         if (!target.plugins.hasPlugin(MavenPublishPlugin::class.java)) {
@@ -39,6 +41,9 @@ class UploadPlugin : Plugin<Project> {
 
         // 在全部配置完成后，执行task之前的回调
         target.afterEvaluate { project ->
+
+            // 配置完成之后打印UploadInfo闭包块
+            println("info：$info")
 
             // 检测UploadInfo
             if (isEmpty(info.groupId))
@@ -85,9 +90,8 @@ class UploadPlugin : Plugin<Project> {
                         } else {
                             pom { it.description.set("Upload Jar,the buildType is: $buildType") }
                         }
-                        // 由于from会帮我们自动收集依赖，所以这里只处理不需要以来的情况
-                        if (!info.hasPomDepend)
-                            noNeedDependency(pom)
+                        // 依赖管理
+                        handleDependency(pom, !info.hasPomDepend)
                     }
             }
 
@@ -110,6 +114,7 @@ class UploadPlugin : Plugin<Project> {
                 }
                 .doLast {
                     println("Upload success !")
+                    println("可添加依赖使用：implementation '${info.groupId}:${info.artifactId}:${info.version}'")
                 }
         }
     }

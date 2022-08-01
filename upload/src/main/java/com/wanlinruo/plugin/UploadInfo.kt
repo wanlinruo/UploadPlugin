@@ -16,4 +16,8 @@ open class UploadInfo {
     var password: String = "uploader"
     var hasPomDepend: Boolean = true// 是否包含依赖项
     var sourceCode: Boolean = true// 是否包含源码
+
+    override fun toString(): String {
+        return "UploadInfo(groupId='$groupId', artifactId='$artifactId', version='$version', releaseUrl='$releaseUrl', snapshotUrl='$snapshotUrl', userName='$userName', password='$password', hasPomDepend=$hasPomDepend, sourceCode=$sourceCode)"
+    }
 }

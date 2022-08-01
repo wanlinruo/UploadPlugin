@@ -37,7 +37,7 @@ dependencies {
 }
 
 uploadInfo {
-    version = "0.0.13-SNAPSHOT"
+    version = "0.0.14-SNAPSHOT"
     artifactId = "test-android-library-java"
     groupId = "com.wanlinruo.test"
 }

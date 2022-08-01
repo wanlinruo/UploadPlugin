@@ -11,7 +11,6 @@ import groovy.util.Node
 import groovy.util.NodeList
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.tasks.SourceSetContainer
@@ -67,11 +66,13 @@ fun createSourceCodeJar(project: Project, isAndroid: Boolean): Jar {
     }
 }
 
-fun noNeedDependency(pom: MavenPom) {
+fun handleDependency(pom: MavenPom, isRemove: Boolean) {
     pom.withXml { xml ->
         val root = xml.asNode()
         val dependenciesNode = root.get("dependencies") as NodeList
-        dependenciesNode.removeAll { true }
+        println("dependenciesNode: ${dependenciesNode.text()}")
+        // 由于from会帮我们自动收集依赖，所以这里只处理不需要依赖的情况
+        if (isRemove) dependenciesNode.removeAll { true }
     }
 }
 
